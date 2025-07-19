@@ -1,6 +1,9 @@
-export const singup = (req,res)=>{
-    res.send("Sign Up")
-}
+export const singup = (req, res) => {
+    const { fullName, email, password } = req.body;
+    try {
+    } catch (error) {}
+    res.send("Sign Up");
+};
 
 export const login = (req, res) => {
     res.send("Login");
