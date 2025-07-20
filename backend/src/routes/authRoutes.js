@@ -4,7 +4,7 @@ import {
     login,
     logout,
     signup,
-    updateProfile,
+    updateProfilePic,
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -15,6 +15,6 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
-router.put("/update-profile", updateProfile);
+router.put("/update-profile", updateProfilePic);
 
 export default router;
