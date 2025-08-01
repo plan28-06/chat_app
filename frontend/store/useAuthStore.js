@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { axiosInstance } from "../src/lib/axios";
 import toast from "react-hot-toast";
+import { Facebook } from "lucide-react";
+import { data } from "react-router-dom";
 
 export const useAuthStore = create((set) => ({
     authUser: null,
@@ -66,6 +68,22 @@ export const useAuthStore = create((set) => ({
             toast.error(error.response.data.message, {
                 style: { background: "#333", color: "#fff" },
             });
+        }
+    },
+
+    updateProfile: async (data) => {
+        set({ isUpdatingProfile: true });
+        try {
+            const res = await axiosInstance.put("/auth/update-profile", data);
+            set({ authUser: res.data });
+            toast.success("Profile updated successfully", {
+                style: { background: "#333", color: "#fff" },
+            });
+        } catch (error) {
+            console.log("error in updata profile", error);
+            toast.error(error.response.data.message);
+        } finally {
+            set({ isUpdatingProfile: false });
         }
     },
 }));
