@@ -1,13 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import {
     User,
     Mail,
     MessageSquare,
-    Eye,    
+    Eye,
     EyeOff,
     Lock,
     Loader2,
@@ -23,10 +24,41 @@ const SignUpPage = () => {
 
     const { signup, isSigningUp } = useAuthStore();
 
-    const validateForm = () => {};
+    const validateForm = () => {
+        if (!formData.fullName.trim()) {
+            return toast.error("Full name is required", {
+                style: { background: "#333", color: "#fff" },
+            });
+        }
+        if (!formData.email.trim()) {
+            return toast.error("Email is required", {
+                style: { background: "#333", color: "#fff" },
+            });
+        }
+        if (
+            !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+                formData.email
+            )
+        ) {
+            return toast.error("Invalid email format", {
+                style: { background: "#333", color: "#fff" },
+            });
+        }
+        if (!formData.password)
+            return toast.error("Password is required", {
+                style: { background: "#333", color: "#fff" },
+            });
+        if (formData.password.length < 6)
+            return toast.error("Password must atleast be 6 characters", {
+                style: { background: "#333", color: "#fff" },
+            });
+        return true;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const success = validateForm();
+        if (success == true) signup(formData);
     };
 
     return (
@@ -159,7 +191,10 @@ const SignUpPage = () => {
                     </div>
                 </div>
             </div>
-            <AuthImagePattern title="Join our community" subtitle = "Connect with friends, share moments, and stay in touch with your loved ones."/>
+            <AuthImagePattern
+                title="Join our community"
+                subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
+            />
         </div>
     );
 };

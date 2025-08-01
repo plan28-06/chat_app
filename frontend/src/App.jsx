@@ -9,8 +9,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
-const App = () => {
+const App = () => { 
     const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const App = () => {
                 <Route
                     path="/login"
                     element={
-                        !authUser ? <LoginPage /> : <Navigate to="/login" />
+                        !authUser ? <LoginPage /> : <Navigate to="/" />
                     }></Route>
                 <Route path="/settings" element={<SettingsPage />}></Route>
                 <Route
@@ -50,6 +51,7 @@ const App = () => {
                         authUser ? <ProfilePage /> : <Navigate to="/login" />
                     }></Route>
             </Routes>
+            <Toaster />
         </div>
     );
 };
