@@ -17,7 +17,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Listening to PORT ${process.env.PORT}`);
