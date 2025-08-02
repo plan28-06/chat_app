@@ -32,7 +32,7 @@ export const useAuthStore = create((set) => ({
                 style: { background: "#333", color: "#fff" },
             });
         } catch (error) {
-            toast.error(error.response.data.message, {
+            toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
@@ -49,7 +49,7 @@ export const useAuthStore = create((set) => ({
                 style: { background: "#333", color: "#fff" },
             });
         } catch (error) {
-            toast.error(error.response.data.message, {
+            toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
@@ -65,7 +65,7 @@ export const useAuthStore = create((set) => ({
                 style: { background: "#333", color: "#fff" },
             });
         } catch (error) {
-            toast.error(error.response.data.message, {
+            toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
             });
         }
@@ -81,7 +81,7 @@ export const useAuthStore = create((set) => ({
             });
         } catch (error) {
             console.log("error in updata profile", error);
-            toast.error(error.response.data.message, {
+            toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
