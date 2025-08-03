@@ -1,20 +1,24 @@
 import { create } from "zustand";
 import { axiosInstance } from "../src/lib/axios";
 import toast from "react-hot-toast";
-import { Facebook } from "lucide-react";
-import { data } from "react-router-dom";
+import { io } from "socket.io-client";
 
-export const useAuthStore = create((set) => ({
+const BASE_URL = "http://localhost:5001";
+
+export const useAuthStore = create((set, get) => ({
     authUser: null,
     isSigningUp: false,
     isLoggingIn: false,
     isUpdatingProfile: false,
+    onlineUsers: [],
     isCheckingAuth: true,
+    socket: null,
 
     checkAuth: async () => {
         try {
             const res = await axiosInstance.get("/auth/check");
             set({ authUser: res.data });
+            get().connectSocket();
         } catch (error) {
             console.log("Error is check Auth", error);
             set({ authUser: null });
@@ -31,6 +35,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Logged in successfully", {
                 style: { background: "#333", color: "#fff" },
             });
+            get().connectSocket();
         } catch (error) {
             toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
@@ -48,6 +53,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Account created successfully", {
                 style: { background: "#333", color: "#fff" },
             });
+            get().connectSocket();
         } catch (error) {
             toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
@@ -64,6 +70,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Logged out successfully", {
                 style: { background: "#333", color: "#fff" },
             });
+            get().disconnectSocket();
         } catch (error) {
             toast.error(error.response?.data?.message || "An Error Occured", {
                 style: { background: "#333", color: "#fff" },
@@ -87,5 +94,23 @@ export const useAuthStore = create((set) => ({
         } finally {
             set({ isUpdatingProfile: false });
         }
+    },
+
+    connectSocket: () => {
+        const { authUser } = get();
+        if (!authUser || get().socket?.connected) return;
+        const socket = io(BASE_URL, {
+            query: {
+                userId: authUser._id,
+            },
+        });
+        socket.connect();
+        set({ socket: socket });
+        socket.on("getOnlineUsers", (userIds) => {
+            set({ onlineUsers: userIds });
+        });
+    },
+    disconnectSocket: () => {
+        if (get().socket?.connected) get().socket.disconnect();
     },
 }));

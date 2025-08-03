@@ -1,4 +1,3 @@
-import React from "react";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -11,8 +10,8 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
-const App = () => { 
-    const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+const App = () => {
+    const { authUser, checkAuth, isCheckingAuth, onlineUsers} = useAuthStore();
 
     useEffect(() => {
         checkAuth();
