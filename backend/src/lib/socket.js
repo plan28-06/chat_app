@@ -13,6 +13,10 @@ const io = new Server(server, {
 
 const userSocketMap = {}; // To Store Online Users
 
+const getReceiverSocketId = (userId) => {
+    return userSocketMap[userId];
+};
+
 io.on("connection", (socket) => {
     console.log("A user connected ", socket.id);
     const userId = socket.handshake.query.userId;
@@ -25,4 +29,4 @@ io.on("connection", (socket) => {
     });
 });
 
-export { io, app, server };
+export { io, app, server, getReceiverSocketId };
