@@ -7,6 +7,9 @@ import cors from "cors";
 import { app, server } from "./lib/socket.js";
 import path from "path";
 
+const PORT = process.env.PORT;
+const __dirname = path.resolve();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
