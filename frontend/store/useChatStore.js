@@ -34,7 +34,7 @@ export const useChatStore = create((set, get) => ({
                 error.response?.data?.message || "Failed to fetch messages",
                 {
                     style: { background: "#333", color: "#fff" },
-                }
+                },
             );
         } finally {
             set({ isMessageLoading: false });
@@ -54,7 +54,7 @@ export const useChatStore = create((set, get) => ({
         try {
             const res = await axiosInstance.post(
                 `/messages/send/${selectedUser._id}`,
-                messageData
+                messageData,
             );
             set({ messages: [...messages, res.data] });
         } catch (error) {
@@ -63,7 +63,7 @@ export const useChatStore = create((set, get) => ({
                 error.response?.data?.message ||
                     error.message ||
                     "Failed to send message",
-                { style: { background: "#333", color: "#fff" } }
+                { style: { background: "#333", color: "#fff" } },
             );
         }
     },
@@ -87,9 +87,11 @@ export const useChatStore = create((set, get) => ({
 
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
+
+        if (!socket) return;
+
         socket.off("newMessage");
     },
-
     setSelectedUser: (user) => {
         set({ selectedUser: user });
     },
