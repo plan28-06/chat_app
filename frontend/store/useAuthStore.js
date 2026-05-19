@@ -1,12 +1,11 @@
 import { create } from "zustand";
-import { axiosInstance } from "../src/lib/axios";
+import { axiosInstance } from "../src/lib/axios"; // Adjust path if your folder structure is slightly different
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
+// FIXED: Using import.meta.env.MODE for Vite to prevent production crashes
 const BASE_URL =
-    process.env.NODE_ENV === "production"
-        ? "" // Uses same domain in production
-        : "http://localhost:5001";
+    import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -23,7 +22,7 @@ export const useAuthStore = create((set, get) => ({
             set({ authUser: res.data });
             get().connectSocket();
         } catch (error) {
-            console.log("Error is check Auth", error);
+            console.log("Error in check Auth", error);
             set({ authUser: null });
         } finally {
             set({ isCheckingAuth: false });
@@ -40,7 +39,7 @@ export const useAuthStore = create((set, get) => ({
             });
             get().connectSocket();
         } catch (error) {
-            toast.error(error.response?.data?.message || "An Error Occured", {
+            toast.error(error.response?.data?.message || "An Error Occurred", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
@@ -58,7 +57,7 @@ export const useAuthStore = create((set, get) => ({
             });
             get().connectSocket();
         } catch (error) {
-            toast.error(error.response?.data?.message || "An Error Occured", {
+            toast.error(error.response?.data?.message || "An Error Occurred", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
@@ -75,7 +74,7 @@ export const useAuthStore = create((set, get) => ({
             });
             get().disconnectSocket();
         } catch (error) {
-            toast.error(error.response?.data?.message || "An Error Occured", {
+            toast.error(error.response?.data?.message || "An Error Occurred", {
                 style: { background: "#333", color: "#fff" },
             });
         }
@@ -90,8 +89,8 @@ export const useAuthStore = create((set, get) => ({
                 style: { background: "#333", color: "#fff" },
             });
         } catch (error) {
-            console.log("error in updata profile", error);
-            toast.error(error.response?.data?.message || "An Error Occured", {
+            console.log("Error in update profile", error);
+            toast.error(error.response?.data?.message || "An Error Occurred", {
                 style: { background: "#333", color: "#fff" },
             });
         } finally {
@@ -101,19 +100,29 @@ export const useAuthStore = create((set, get) => ({
 
     connectSocket: () => {
         const { authUser } = get();
+        // Prevent connection if not logged in or if a socket is already actively connected
         if (!authUser || get().socket?.connected) return;
+
         const socket = io(BASE_URL, {
             query: {
                 userId: authUser._id,
             },
         });
+
         socket.connect();
         set({ socket: socket });
+
+        // CRITICAL: Actively listen for backend broadcasts to update online users
         socket.on("getOnlineUsers", (userIds) => {
             set({ onlineUsers: userIds });
         });
     },
+
     disconnectSocket: () => {
-        if (get().socket?.connected) get().socket.disconnect();
+        // FIXED: Clear out the socket and onlineUsers array completely when a user logs out
+        if (get().socket?.connected) {
+            get().socket.disconnect();
+            set({ socket: null, onlineUsers: [] });
+        }
     },
 }));
